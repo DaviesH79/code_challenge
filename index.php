@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <html>
 <title>JHA Record Keeper</title>
 	<head>
@@ -21,11 +22,11 @@
 			</td>			
 			<td>
 				<label for="analyst">Analyst</label><br>
-				<input type="text" id="anaylst" name="anaylst"><br>
+				<input type="text" id="analyst" name="analyst"><br>
 			</td>			
 			<td>
-				<label for="date">Date</label><br>
-				<input type="text" id="date" name="date"><br>
+				<label for="dt">Date</label><br>
+				<input type="date" id="dt" name="dt"><br>
 			</td>			
 		</tr>
 	</table>
@@ -61,6 +62,7 @@
 			</td>	
 		</tr>
 	</table>
+	<button type="submit">Submit</button>
 </form>
 <br>
 <form>

@@ -4,27 +4,38 @@ Code taken from
 https://www.leaseweb.com/labs/2015/10/creating-a-simple-rest-api-in-php/
 Edited as needed by Holly Davies
 **/ 
+include 'request.php';
 
-class Api {
+class Api extends Request {
 
-public function run(){
-// get the HTTP method, path and body of the request
+public function api(){
 $method = $_SERVER['REQUEST_METHOD'];
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-$input = json_decode(file_get_contents('php://input'),true);
-if (empty($input) && ($method == 'PUT' || $method == 'POST' )){
-	print_r("Your request body is not valid json");
-  http_response_code(400);
-}
 
+// Check if this is a POST from the APP or API
+if($this->checkRequest()){
+	$queryArray = $this->parseQueryString();
+	$input = $this->createJob($queryArray);
+	$table = 'job';
+	$method = 'POST';
+
+} else {
+
+// get the HTTP method, path and body of the request
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+// this gets the body of the request
+$input = json_decode(file_get_contents('php://input'),true);
+		if (empty($input) && ($method == 'PUT' || $method == 'POST' )){
+			print_r("Your request body is not valid json");
+  		http_response_code(400);
+		}
+// retrieve the table from the path
+$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+$key = array_shift($request)+0;
+}
  
 // connect to the mysql database
 $link = mysqli_connect('localhost', 'root', 'admin123', 'recordkeeper');
 mysqli_set_charset($link,'utf8');
- 
-// retrieve the table and key from the path
-$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-$key = array_shift($request)+0;
  
 // escape the columns and values from the input object
 $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
@@ -51,7 +62,6 @@ switch ($method) {
   case 'DELETE':
     $sql = "delete from `$table` where id=$key"; break;
 }
- 
 // excecute SQL statement
 $result = mysqli_query($link,$sql);
  
@@ -79,6 +89,6 @@ mysqli_close($link);
 }
 }
 $api = new Api();
-$api->run();
+$api->api();
 
-
+?>
