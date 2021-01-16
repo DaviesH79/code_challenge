@@ -10,16 +10,20 @@ class Api extends Request {
 
 public function api(){
 $method = $_SERVER['REQUEST_METHOD'];
+$table = 'job1';
 
 // Check if this is a POST from the APP or API
-if($this->checkRequest()){
-	$queryArray = $this->parseQueryString();
-	$input = $this->createJob($queryArray);
-	$table = 'job';
-	$method = 'POST';
-
+//if($this->checkRequest()){
+//	$input = $this->parseQueryString();
+//	//$input = $this->createJob($queryArray);
+//	$table = 'job1';
+//	$method = 'POST';
+//	//print_r("got here");
+if (isset($_POST['submit'])){
+	$input = $this->parseRequest();
 } else {
 
+// todo create logic for a GET from the web app AND from the API
 // get the HTTP method, path and body of the request
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 // this gets the body of the request
@@ -50,20 +54,24 @@ for ($i=0;$i<count($columns);$i++) {
   $set.=($i>0?',':'').'`'.$columns[$i].'`=';
   $set.=($values[$i]===null?'NULL':'"'.$values[$i].'"');
 }
+var_dump($set);
 
 // create SQL based on HTTP method
 switch ($method) {
   case 'GET':
-    $sql = "select * from `$table`".($key?" WHERE id=$key":''); break;
+    $sql = "select * from `$table`".($key?" WHERE id=$key":';'); break;
   case 'PUT':
     $sql = "update `$table` set $set where id=$key"; break;
   case 'POST':
-    $sql = "insert into `$table` set $set"; break;
+    $sql = "insert into `$table` set $set;"; break;
   case 'DELETE':
     $sql = "delete from `$table` where id=$key"; break;
 }
+var_dump($sql);
+
 // excecute SQL statement
 $result = mysqli_query($link,$sql);
+var_dump($result);
  
 // die if SQL statement failed
 if (!$result) {

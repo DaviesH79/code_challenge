@@ -8,7 +8,7 @@
 <body>
 <h1>Welcome to the JHA Record Keeper</h1>
 <br></br>
-<form id="addanalysis" action="/api.php">
+<form id="addanalysis" action="/api.php" method="post">
 	<h2>Enter Your Job Hazard Analysis Form Here</h2>
 	<table id="table1" cellpadding="5px" cellspacing="5px">
 		<tr>
@@ -26,7 +26,7 @@
 			</td>			
 			<td>
 				<label for="dt">Date</label><br>
-				<input type="date" id="dt" name="dt"><br>
+				<input type="date" id="dt" name="dt" required><br>
 			</td>			
 		</tr>
 	</table>
@@ -34,19 +34,23 @@
 		<tr>
 			<td>
 				<label for="step">Step</label><br>
-				<input type="text" id="step" name="step"><br>
+				<input type="text" id="step" name="step" required><br>
 			</td>			
 			<td>
-				<label for="desc">Description of Step</label><br>
-				<textarea rows="1" cols="50" name="desc"></textarea>
+				<label for="step_desc">Description of Step</label><br>
+				<textarea rows="1" cols="50" id="step_desc" name="step_desc"></textarea>
 			</td>	
 		</tr>
 	</table>
 	<table id="table3" cellpadding="5px" cellspacing="5px">
 		<tr>
 			<td>
-				<label for="hazards">Potential Hazards</label><br>
-				<input type="text" id="hazards" name="hazards"><br>
+				<label for="hazard_type">Hazard Type</label><br>
+				<input type="text" id="hazard_type" name="hazard_type"><br>
+			</td>			
+			<td>
+				<label for="hazard_description">Hazard Description</label><br>
+				<textarea rows="1" cols="50" id="hazard_description" name="hazard_description"></textarea>
 			</td>			
 			<td>
 				<label for="controls">Controls</label><br>
@@ -62,19 +66,22 @@
 			</td>	
 		</tr>
 	</table>
-	<button type="submit">Submit</button>
+	<!--the submit is a get but a post doesn't have a QS params-->
+	<!--button type="submit" formmethod="post">Submit</button-->
+	<input type="submit" name="submit"/>
 </form>
 <br>
-<form>
+<form action="/api.php">
 	<h2>Retrieve Job Hazard Analysis Here</h2>
 	<table id="table5" cellpadding="5px" cellspacing="5px">
 		<tr>
 			<td>
 				<label for="jobhazard">Enter Job Title for Hazards</label><br>
-				<input type="text" id="jobhazard" name="jobhazard"><br>
+				<input type="text" id="title" name="title"><br>
 			</td>			
 		</tr>
 	</table>
+	<button type="submit">Submit</button>
 </form>
 </body>
 </html>
