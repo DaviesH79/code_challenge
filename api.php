@@ -10,17 +10,12 @@ class Api extends Request {
 
 public function api(){
 $method = $_SERVER['REQUEST_METHOD'];
-$table = 'job1';
+$table = 'job';
 
-// Check if this is a POST from the APP or API
-//if($this->checkRequest()){
-//	$input = $this->parseQueryString();
-//	//$input = $this->createJob($queryArray);
-//	$table = 'job1';
-//	$method = 'POST';
-//	//print_r("got here");
-if (isset($_POST['submit'])){
+// check if the request is coming from web app and parse that form data
+if ($this->checkRequest()){
 	$input = $this->parseRequest();
+
 } else {
 
 // todo create logic for a GET from the web app AND from the API
@@ -28,13 +23,20 @@ if (isset($_POST['submit'])){
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 // this gets the body of the request
 $input = json_decode(file_get_contents('php://input'),true);
-		if (empty($input) && ($method == 'PUT' || $method == 'POST' )){
+		if (empty($input) && ($method == 'PUT' || $method == 'POST')){
 			print_r("Your request body is not valid json");
   		http_response_code(400);
 		}
 // retrieve the table from the path
 $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-$key = array_shift($request)+0;
+
+// $key = array_shift($request)+0;
+// get key and value for query
+$qsArray = $this->parseQueryString();
+$keys = array_keys($qsArray);
+$key = $keys[0];
+$value = $qsArray[$key]; 
+
 }
  
 // connect to the mysql database
@@ -54,12 +56,13 @@ for ($i=0;$i<count($columns);$i++) {
   $set.=($i>0?',':'').'`'.$columns[$i].'`=';
   $set.=($values[$i]===null?'NULL':'"'.$values[$i].'"');
 }
-var_dump($set);
 
 // create SQL based on HTTP method
 switch ($method) {
+  //case 'GET':
+  //  $sql = "select * from `$table`".($key?" WHERE id=$key":';'); break;
   case 'GET':
-    $sql = "select * from `$table`".($key?" WHERE id=$key":';'); break;
+    $sql = "select * from `$table`".($key?" WHERE $key='$value'":';'); break;
   case 'PUT':
     $sql = "update `$table` set $set where id=$key"; break;
   case 'POST':
@@ -67,18 +70,16 @@ switch ($method) {
   case 'DELETE':
     $sql = "delete from `$table` where id=$key"; break;
 }
-var_dump($sql);
 
 // excecute SQL statement
 $result = mysqli_query($link,$sql);
-var_dump($result);
  
 // die if SQL statement failed
 if (!$result) {
   http_response_code(404);
   die(mysqli_error());
 }
- 
+
 // print results, insert id or affected row count
 if ($method == 'GET') {
   if (!$key) echo '[';

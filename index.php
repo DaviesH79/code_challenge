@@ -68,20 +68,63 @@
 	</table>
 	<!--the submit is a get but a post doesn't have a QS params-->
 	<!--button type="submit" formmethod="post">Submit</button-->
-	<input type="submit" name="submit"/>
+	<input type="submit" name="submit" value="Submit" class="submit"/>
 </form>
+<script type="text/javascript">
+	//function submitForm() {
+	//	document.getElementById("addanalysis").submit();
+	//}
+	$("#addanalysis").submit(function(e) {
+
+  	  e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    	var form = $(this);
+    	var url = form.attr('action');
+   
+			console.log(form.serialize()); 
+  	  $.ajax({
+           type: "POST",
+           url: url,
+           data: form.serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               //alert(data); // show response from the php script.
+							alert('Your report has been submitted');
+           }
+         });
+	});
+</script>
 <br>
-<form action="/api.php">
+<form id="gethazards" action="/api.php/job" method="get">
 	<h2>Retrieve Job Hazard Analysis Here</h2>
-	<table id="table5" cellpadding="5px" cellspacing="5px">
-		<tr>
-			<td>
+	<table id="table2" class="center" cellpadding="5px" cellspacing="5px">
 				<label for="jobhazard">Enter Job Title for Hazards</label><br>
-				<input type="text" id="title" name="title"><br>
-			</td>			
-		</tr>
-	</table>
-	<button type="submit">Submit</button>
+				<input type="text" id="title" name="title" class="center"><br>
+	</table><br>
+	<input type="submit" name="submit" class="submit"/>
 </form>
+<script type="text/javascript">
+	$("#gethazards").submit(function(e) {
+
+  	  e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    	var form = $(this);
+    	var url = form.attr('action');
+   
+  	  $.ajax({
+           type: "GET",
+           url: url,
+           data: form.serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               //alert(data); // show response from the php script.
+							$("#searchResults").html(data);
+           }
+         });
+	});
+</script>
+<div id="searchResults">
+<h2></h2>
+</div>
 </body>
 </html>
