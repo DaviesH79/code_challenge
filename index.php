@@ -8,7 +8,7 @@
 <body>
 <h1>Welcome to the JHA Record Keeper</h1>
 <br></br>
-<form id="addanalysis" action="/api.php" method="post">
+<form id="addanalysis" action="/api.php">
 	<h2>Enter Your Job Hazard Analysis Form Here</h2>
 	<table id="table1" cellpadding="5px" cellspacing="5px">
 		<tr>
@@ -66,14 +66,9 @@
 			</td>	
 		</tr>
 	</table>
-	<!--the submit is a get but a post doesn't have a QS params-->
-	<!--button type="submit" formmethod="post">Submit</button-->
-	<input type="submit" name="submit" value="Submit" class="submit"/>
+	<input type="submit" value="Submit" id="btnSubmit1"/>
 </form>
 <script type="text/javascript">
-	//function submitForm() {
-	//	document.getElementById("addanalysis").submit();
-	//}
 	$("#addanalysis").submit(function(e) {
 
   	  e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -86,12 +81,13 @@
            type: "POST",
            url: url,
            data: form.serialize(), // serializes the form's elements.
-           success: function(data)
+           success: function(response)
            {
-               //alert(data); // show response from the php script.
+               //alert(response); // show response from the php script.
 							alert('Your report has been submitted');
            }
          });
+			return false;
 	});
 </script>
 <br>
@@ -115,8 +111,11 @@
            type: "GET",
            url: url,
            data: form.serialize(), // serializes the form's elements.
-           success: function(data)
+           dataType: "text",
+					 success: function(data)
            {
+							//var data = JSON.parse(data);
+							console.log(data);
                //alert(data); // show response from the php script.
 							$("#searchResults").html(data);
            }

@@ -21,12 +21,14 @@ if ($this->checkRequest()){
 // todo create logic for a GET from the web app AND from the API
 // get the HTTP method, path and body of the request
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+
 // this gets the body of the request
 $input = json_decode(file_get_contents('php://input'),true);
 		if (empty($input) && ($method == 'PUT' || $method == 'POST')){
 			print_r("Your request body is not valid json");
   		http_response_code(400);
 		}
+
 // retrieve the table from the path
 $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
@@ -36,7 +38,6 @@ $qsArray = $this->parseQueryString();
 $keys = array_keys($qsArray);
 $key = $keys[0];
 $value = $qsArray[$key]; 
-
 }
  
 // connect to the mysql database
@@ -56,7 +57,6 @@ for ($i=0;$i<count($columns);$i++) {
   $set.=($i>0?',':'').'`'.$columns[$i].'`=';
   $set.=($values[$i]===null?'NULL':'"'.$values[$i].'"');
 }
-
 // create SQL based on HTTP method
 switch ($method) {
   //case 'GET':
@@ -73,6 +73,8 @@ switch ($method) {
 
 // excecute SQL statement
 $result = mysqli_query($link,$sql);
+//var_dump($sql);
+//var_dump($result);
  
 // die if SQL statement failed
 if (!$result) {
@@ -82,10 +84,13 @@ if (!$result) {
 
 // print results, insert id or affected row count
 if ($method == 'GET') {
+	//$json = json_encode(mysqli_fetch_object($result));
+	//var_dump($json);
+	//echo $json;
   if (!$key) echo '[';
-  for ($i=0;$i<mysqli_num_rows($result);$i++) {
-    echo ($i>0?',':'').json_encode(mysqli_fetch_object($result));
-  }
+  	for ($i=0;$i<mysqli_num_rows($result);$i++) {
+    	echo ($i>0?',':'').json_encode(mysqli_fetch_object($result));
+  	}
   if (!$key) echo ']';
 } elseif ($method == 'POST') {
   echo mysqli_insert_id($link);
@@ -98,6 +103,4 @@ mysqli_close($link);
 }
 }
 $api = new Api();
-$api->api();
-
 ?>
