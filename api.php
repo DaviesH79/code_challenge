@@ -68,7 +68,8 @@ switch ($method) {
   case 'POST':
     $sql = "insert into `$table` set $set;"; break;
   case 'DELETE':
-    $sql = "delete from `$table` where id=$key"; break;
+    //$sql = "delete from `$table` where id=$key"; break;
+    $sql = "delete from `$table`".($key?" WHERE $key='$value'":';'); break;
 }
 
 // excecute SQL statement
@@ -95,7 +96,7 @@ if ($method == 'GET') {
 } elseif ($method == 'POST') {
   echo mysqli_insert_id($link);
 } else {
-  echo mysqli_affected_rows($link);
+  echo mysqli_affected_rows($link) . ' rows deleted';
 }
  
 // close mysql connection
