@@ -1,8 +1,7 @@
 <?php
 /**
-Code taken from
-https://www.leaseweb.com/labs/2015/10/creating-a-simple-rest-api-in-php/
-Edited as needed by Holly Davies
+This class receives HTTP requests, parses the payload/query
+and performs the requested method against the DB.
 **/ 
 include 'request.php';
 
@@ -41,7 +40,7 @@ $value = $qsArray[$key];
 }
  
 // connect to the mysql database
-$link = mysqli_connect('localhost', 'root', 'admin123', 'recordkeeper');
+$link = mysqli_connect('localhost', 'root', '', 'recordkeeper');
 mysqli_set_charset($link,'utf8');
  
 // escape the columns and values from the input object
